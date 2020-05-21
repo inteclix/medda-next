@@ -22,8 +22,7 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 */
 console.log(path.join(__dirname, "database.sqlite"))
 const sequelize = new Sequelize({
-  dialect: "sqlite",
-  storage: "./database.sqlite",
+  dialect: "sqlite"
 });
 
 /*
