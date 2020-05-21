@@ -22,7 +22,7 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 */
 const sequelize = new Sequelize({
   dialect: 'sqlite',
-  storage: './database.sqlite'
+  storage: 'database.sqlite'
 });
 
 /*
