@@ -7,7 +7,7 @@ export default async (req, res) => {
     });
     return res.status(200).send(specialities);
   } catch (error) {
-    res.status(500).json({ message: "error"})
+    res.status(500).json(JSON.stringify(db.sequelize, null, 2))
   }
 
   

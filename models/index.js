@@ -22,7 +22,8 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 */
 console.log(path.join(__dirname, "database.sqlite"))
 const sequelize = new Sequelize({
-  dialect: "sqlite"
+  dialect: "sqlite",
+  storage: path.resolve(process.cwd(), "database.sqlite"),
 });
 
 /*
@@ -233,5 +234,7 @@ async function seed() {
     name: "doliprane",
   });
 }
+
+console.dir(sequelize.options)
 
 module.exports = db;
