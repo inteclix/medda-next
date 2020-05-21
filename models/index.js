@@ -1,7 +1,7 @@
 const bcrypt = require("bcryptjs");
 const config = require("../config/db.config.js");
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const basename = path.basename(__filename);
 const { Sequelize } = require("sequelize");
 
@@ -20,9 +20,10 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   },
 });
 */
+console.log(path.join(__dirname, "database.sqlite"))
 const sequelize = new Sequelize({
-  dialect: 'sqlite',
-  storage: 'database.sqlite'
+  dialect: "sqlite",
+  storage: "./database.sqlite",
 });
 
 /*
@@ -33,22 +34,34 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.clinic = require("./clinic")(sequelize, Sequelize)
-db.user = require("./user")(sequelize, Sequelize)
-db.doctor = require("./doctor")(sequelize, Sequelize)
-db.patient = require("./patient")(sequelize, Sequelize)
-db.speciality = require("./speciality")(sequelize, Sequelize)
-db.analyse = require("./analyse")(sequelize, Sequelize)
-db.appointment = require("./appointment")(sequelize, Sequelize)
-db.consultation = require("./consultation")(sequelize, Sequelize)
-db.consultationHealthParameter = require("./consultationHealthParameter")(sequelize, Sequelize)
-db.healthParameter = require("./healthParameter")(sequelize, Sequelize)
-db.healthParameterCategory = require("./healthParameterCategory")(sequelize, Sequelize)
-db.healthParameterOption = require("./healthParameterOption")(sequelize, Sequelize)
-db.medicament = require("./medicament")(sequelize, Sequelize)
-db.medicamentPrescription = require("./medicamentPrescription")(sequelize, Sequelize)
-db.prescription = require("./prescription")(sequelize, Sequelize)
-db.secretary = require("./secretary")(sequelize, Sequelize)
+db.clinic = require("./clinic")(sequelize, Sequelize);
+db.user = require("./user")(sequelize, Sequelize);
+db.doctor = require("./doctor")(sequelize, Sequelize);
+db.patient = require("./patient")(sequelize, Sequelize);
+db.speciality = require("./speciality")(sequelize, Sequelize);
+db.analyse = require("./analyse")(sequelize, Sequelize);
+db.appointment = require("./appointment")(sequelize, Sequelize);
+db.consultation = require("./consultation")(sequelize, Sequelize);
+db.consultationHealthParameter = require("./consultationHealthParameter")(
+  sequelize,
+  Sequelize
+);
+db.healthParameter = require("./healthParameter")(sequelize, Sequelize);
+db.healthParameterCategory = require("./healthParameterCategory")(
+  sequelize,
+  Sequelize
+);
+db.healthParameterOption = require("./healthParameterOption")(
+  sequelize,
+  Sequelize
+);
+db.medicament = require("./medicament")(sequelize, Sequelize);
+db.medicamentPrescription = require("./medicamentPrescription")(
+  sequelize,
+  Sequelize
+);
+db.prescription = require("./prescription")(sequelize, Sequelize);
+db.secretary = require("./secretary")(sequelize, Sequelize);
 
 /*
   setup relation between models
@@ -64,7 +77,7 @@ db.clinic.secretaries = db.clinic.hasMany(db.secretary);
 //db.clinic.patients = db.clinic.hasMany(db.patient);
 db.clinic.doctors = db.clinic.hasMany(db.doctor);
 db.clinic.appointments = db.clinic.hasMany(db.appointment);
-db.clinic.belongsToMany(db.patient, { through: "clinic_patient" })
+db.clinic.belongsToMany(db.patient, { through: "clinic_patient" });
 
 // doctors
 db.doctor.user = db.doctor.belongsTo(db.user);
@@ -90,11 +103,11 @@ db.patient.belongsTo(db.doctor, {
 });
 db.patient.appointments = db.patient.hasMany(db.appointment);
 db.patient.consultations = db.patient.hasMany(db.consultation);
-db.patient.belongsToMany(db.clinic, { through: "clinic_patient" })
+db.patient.belongsToMany(db.clinic, { through: "clinic_patient" });
 // appointments
-db.appointment.belongsTo(db.patient)
-db.appointment.belongsTo(db.clinic)
-db.appointment.belongsTo(db.doctor)
+db.appointment.belongsTo(db.patient);
+db.appointment.belongsTo(db.clinic);
+db.appointment.belongsTo(db.doctor);
 db.appointment.belongsTo(db.user, {
   as: "createdBy",
   foreignKey: "createdById",
@@ -105,28 +118,36 @@ db.appointment.belongsTo(db.user, {
 });
 
 // consultation
-db.consultation.belongsTo(db.patient)
-db.consultation.belongsTo(db.doctor)
-db.consultation.belongsToMany(db.healthParameter, { through: "consultation_health_parameters" })
-db.consultation.belongsToMany(db.analyse, { through: "analyse_consultation" })
+db.consultation.belongsTo(db.patient);
+db.consultation.belongsTo(db.doctor);
+db.consultation.belongsToMany(db.healthParameter, {
+  through: "consultation_health_parameters",
+});
+db.consultation.belongsToMany(db.analyse, { through: "analyse_consultation" });
 
 // health parameter
-db.healthParameter.belongsToMany(db.consultation, {through: "consultation_health_parameters"})
-db.healthParameter.hasMany(db.healthParameterOption)
-db.healthParameterOption.belongsTo(db.healthParameter)
-db.healthParameter.belongsTo(db.healthParameterCategory)
-db.healthParameterCategory.hasMany(db.healthParameter)
+db.healthParameter.belongsToMany(db.consultation, {
+  through: "consultation_health_parameters",
+});
+db.healthParameter.hasMany(db.healthParameterOption);
+db.healthParameterOption.belongsTo(db.healthParameter);
+db.healthParameter.belongsTo(db.healthParameterCategory);
+db.healthParameterCategory.hasMany(db.healthParameter);
 
 // prescription and medicament
-db.prescription.belongsTo(db.consultation)
-db.prescription.belongsToMany(db.medicament, { through: "medicament_prescription" })
-db.medicament.belongsToMany(db.prescription, { through: "medicament_prescription" })
+db.prescription.belongsTo(db.consultation);
+db.prescription.belongsToMany(db.medicament, {
+  through: "medicament_prescription",
+});
+db.medicament.belongsToMany(db.prescription, {
+  through: "medicament_prescription",
+});
 
 /*
   sync and seed
  */
 
-db.sequelize.sync({ force: true })
+db.sequelize.sync({ force: true });
 //db.sequelize.sync({ force: true }).then(() => {seed();});
 
 async function seed() {
@@ -142,16 +163,14 @@ async function seed() {
     username: "doctor",
     password: bcrypt.hashSync("123456", 8),
     mobile: "0500000000",
-    isActive: 1
+    isActive: 1,
   });
-
 
   // clinic
   const clinic = await db.clinic.create({
     id: 1,
     name: "clinic saada",
   });
-
 
   await db.doctor.create({
     id: 1,
@@ -164,56 +183,56 @@ async function seed() {
   // type: Sequelize.INTEGER // 0: text, 1: number, 2: date, 3: boolean, 4: list
   await db.healthParameterCategory.create({
     id: 1,
-    name: "category name"
-  })
+    name: "category name",
+  });
 
   await db.healthParameter.create({
     id: 1,
     code: "code text",
     label: "name text",
     type: 0,
-    healthParameterCategoryId: 1
-  })
+    healthParameterCategoryId: 1,
+  });
 
   await db.healthParameter.create({
     id: 2,
     code: "code number",
     label: "name number",
     type: 1,
-    healthParameterCategoryId: 1
-  })
+    healthParameterCategoryId: 1,
+  });
 
   await db.healthParameter.create({
     id: 3,
     code: "code date",
     label: "name date",
     type: 2,
-    healthParameterCategoryId: 1
-  })
+    healthParameterCategoryId: 1,
+  });
   await db.healthParameter.create({
     id: 4,
     code: "code boolean",
     label: "name boolean",
     type: 3,
-    healthParameterCategoryId: 1
-  })
+    healthParameterCategoryId: 1,
+  });
 
   await db.healthParameter.create({
     id: 5,
     code: "code list",
     label: "name list",
     type: 4,
-    healthParameterCategoryId: 1
-  })
+    healthParameterCategoryId: 1,
+  });
 
   await db.healthParameterOption.create({
     name: "option for list",
-    healthParameterId: 5
-  })
+    healthParameterId: 5,
+  });
 
   await db.medicament.create({
-    name: "doliprane"
-  })
+    name: "doliprane",
+  });
 }
 
 module.exports = db;
