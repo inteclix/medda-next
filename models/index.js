@@ -147,7 +147,7 @@ db.medicament.belongsToMany(db.prescription, {
   sync and seed
  */
 
-db.sequelize.sync({ force: true });
+//db.sequelize.sync({ force: true });
 //db.sequelize.sync({ force: true }).then(() => {seed();});
 
 async function seed() {
