@@ -5,6 +5,7 @@ const path = require('path');
 const basename = path.basename(__filename);
 const { Sequelize } = require("sequelize");
 
+/* mysql2
 const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
   host: config.HOST,
   port: config.PORT,
@@ -18,6 +19,11 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
     idle: config.pool.idle,
   },
 });
+*/
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite'
+});
 
 /*
   loading models from files
@@ -26,15 +32,23 @@ const sequelize = new Sequelize(config.DB, config.USER, config.PASSWORD, {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize);
-    db[file.slice(0, -3)] = model
-  });
+
+db.clinic = require("./clinic")(sequelize, Sequelize)
+db.user = require("./user")(sequelize, Sequelize)
+db.doctor = require("./doctor")(sequelize, Sequelize)
+db.patient = require("./patient")(sequelize, Sequelize)
+db.speciality = require("./speciality")(sequelize, Sequelize)
+db.analyse = require("./analyse")(sequelize, Sequelize)
+db.appointment = require("./appointment")(sequelize, Sequelize)
+db.consultation = require("./consultation")(sequelize, Sequelize)
+db.consultationHealthParameter = require("./consultationHealthParameter")(sequelize, Sequelize)
+db.healthParameter = require("./healthParameter")(sequelize, Sequelize)
+db.healthParameterCategory = require("./healthParameterCategory")(sequelize, Sequelize)
+db.healthParameterOption = require("./healthParameterOption")(sequelize, Sequelize)
+db.medicament = require("./medicament")(sequelize, Sequelize)
+db.medicamentPrescription = require("./medicamentPrescription")(sequelize, Sequelize)
+db.prescription = require("./prescription")(sequelize, Sequelize)
+db.secretary = require("./secretary")(sequelize, Sequelize)
 
 /*
   setup relation between models
@@ -112,7 +126,7 @@ db.medicament.belongsToMany(db.prescription, { through: "medicament_prescription
   sync and seed
  */
 
-db.sequelize.sync({ force: true }).then(() => {seed();});
+//db.sequelize.sync({ force: true }).then(() => {seed();});
 
 async function seed() {
   await db.speciality.create({
